@@ -14,7 +14,8 @@ export class TransactionService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
-  ) {}
+  ) {
+  }
 
   async create(createTransactionDto: CreateTransactionDto, id: number) {
     const newTransaction = {
@@ -91,5 +92,18 @@ export class TransactionService {
       skip: (page - 1) * limit,
     });
     return transactions;
+  }
+
+  async findAllByType(id: number, type: string) {
+    const transactions = await this.transactionRepository.find({
+      where: {
+        user: { id },
+        type,
+      },
+    });
+
+    const total = transactions.reduce((acc, obj) => acc + obj.amount, 0);
+
+    return total;
   }
 }
